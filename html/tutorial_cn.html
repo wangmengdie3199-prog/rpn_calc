@@ -1,607 +1,222 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en-us">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RPN计算器使用手册</title>
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --light-color: #ecf0f1;
-            --dark-color: #34495e;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --border-color: #bdc3c7;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            margin-top: 30px;
-            margin-bottom: 30px;
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 3px solid var(--secondary-color);
-        }
-        
-        h1 {
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            font-size: 2.5em;
-        }
-        
-        .subtitle {
-            color: var(--dark-color);
-            font-size: 1.2em;
-            font-weight: 300;
-        }
-        
-        h2 {
-            color: var(--primary-color);
-            margin: 35px 0 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--light-color);
-            font-size: 1.8em;
-        }
-        
-        h3 {
-            color: var(--dark-color);
-            margin: 25px 0 15px;
-            font-size: 1.4em;
-        }
-        
-        p {
-            margin-bottom: 15px;
-            font-size: 1.1em;
-        }
-        
-        ul, ol {
-            margin-left: 25px;
-            margin-bottom: 25px;
-        }
-        
-        li {
-            margin-bottom: 10px;
-            font-size: 1.1em;
-        }
-        
-        .section {
-            margin-bottom: 40px;
-        }
-        
-        .card {
-            background-color: var(--light-color);
-            border-left: 5px solid var(--secondary-color);
-            padding: 20px;
-            margin-bottom: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        
-        .card.warning {
-            border-left-color: var(--warning-color);
-            background-color: #fff8e1;
-        }
-        
-        .card.success {
-            border-left-color: var(--success-color);
-            background-color: #e8f5e8;
-        }
-        
-        .code-block {
-            background-color: #2d2d2d;
-            color: #f8f8f2;
-            padding: 20px;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 1em;
-            line-height: 1.4;
-            border: 1px solid #444;
-        }
-        
-        .example {
-            background-color: #e3f2fd;
-            border: 1px solid var(--secondary-color);
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-        
-        .example-title {
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 25px 0;
-            box-shadow: 0 2px 3px rgba(0,0,0,0.1);
-        }
-        
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        th {
-            background-color: var(--primary-color);
-            color: white;
-            font-weight: 600;
-        }
-        
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-        
-        tr:hover {
-            background-color: #e9ecef;
-        }
-        
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin: 25px 0;
-        }
-        
-        .feature-item {
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .feature-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        
-        .feature-icon {
-            font-size: 2.5em;
-            color: var(--secondary-color);
-            margin-bottom: 15px;
-        }
-        
-        .footer {
-            text-align: center;
-            margin-top: 50px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-color);
-            color: #777;
-        }
-        
-        .nav-tabs {
-            display: flex;
-            margin-bottom: 30px;
-            border-bottom: 2px solid var(--light-color);
-        }
-        
-        .nav-tab {
-            padding: 12px 25px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.1em;
-            color: var(--dark-color);
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-tab.active {
-            color: var(--secondary-color);
-            border-bottom-color: var(--secondary-color);
-            font-weight: 600;
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-                margin: 15px;
-            }
-            
-            h1 {
-                font-size: 2em;
-            }
-            
-            .feature-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .nav-tabs {
-                flex-direction: column;
-            }
-            
-            .nav-tab {
-                text-align: left;
-                border-bottom: 1px solid var(--border-color);
-            }
-        }
-    </style>
+  <title>tutorial_cn.nim</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🐳</text></svg>">
+  <meta content="text/html; charset=utf-8" http-equiv="content-type">
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <meta content="nimib 0.3.12" name="generator">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.min.css">
+  <link rel='stylesheet' href='https://cdn.jsdelivr.net/gh/pietroppeter/nimib/assets/atom-one-light.css'>
+    <script src="https://cdn.jsdelivr.net/gh/pietroppeter/nimib@main/assets/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+
+  <style>
+.nb-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nb-small {
+  font-size: 0.8rem;
+}
+button.nb-small {
+  float: right;
+  padding: 2px;
+  padding-right: 5px;
+  padding-left: 5px;
+}
+section#source {
+  display:none
+}
+pre > code {
+  font-size: 1.2em;
+}
+.nb-output {
+  line-height: 1.15;
+}
+figure {
+  margin: 2rem 0;
+}
+figcaption {
+  text-align: center;
+}
+  
+</style>
+  
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>RPN计算器使用手册</h1>
-            <p class="subtitle">逆波兰表示法计算器 - 完整使用指南</p>
-        </header>
-        
-        <div class="nav-tabs">
-            <button class="nav-tab active" onclick="switchTab('installation')">安装指南</button>
-            <button class="nav-tab" onclick="switchTab('usage')">使用示例</button>
-            <button class="nav-tab" onclick="switchTab('operations')">操作说明</button>
-            <button class="nav-tab" onclick="switchTab('advanced')">高级功能</button>
-            <button class="nav-tab" onclick="switchTab('troubleshooting')">故障排除</button>
-        </div>
-        
-        <!-- 安装指南标签 -->
-        <div id="installation" class="tab-content active">
-            <section class="section">
-                <h2>系统要求</h2>
-                <div class="card">
-                    <h3>支持的操作系统</h3>
-                    <ul>
-                        <li>Linux (Ubuntu, CentOS, Debian等)</li>
-                        <li>macOS 10.12及以上版本</li>
-                        <li>Windows 10及以上版本 (需要WSL或Cygwin)</li>
-                    </ul>
-                </div>
-                
-                <div class="card">
-                    <h3>依赖环境</h3>
-                    <ul>
-                        <li>Bash shell环境</li>
-                        <li>标准C++运行时库</li>
-                        <li>至少50MB可用磁盘空间</li>
-                    </ul>
-                </div>
-            </section>
-            
-            <section class="section">
-                <h2>安装步骤</h2>
-                <div class="card success">
-                    <h3>方法一：使用Release包（推荐）</h3>
-                    <ol>
-                        <li>从Release页面下载最新版本的压缩包</li>
-                        <li>解压到目标目录：<code>tar -xzf rpn_calculator.tar.gz</code></li>
-                        <li>进入解压后的目录：<code>cd rpn_calculator</code></li>
-                        <li>运行启动脚本：<code>./run.sh</code></li>
-                    </ol>
-                </div>
-                
-                <div class="card">
-                    <h3>方法二：从源码编译</h3>
-                    <ol>
-                        <li>克隆源代码仓库：<code>git clone https://github.com/your-repo/rpn-calculator.git</code></li>
-                        <li>进入项目目录：<code>cd rpn-calculator</code></li>
-                        <li>编译项目：<code>make</code></li>
-                        <li>运行程序：<code>./rpn_calc</code></li>
-                    </ol>
-                </div>
-            </section>
-        </div>
-        
-        <!-- 使用示例标签 -->
-        <div id="usage" class="tab-content">
-            <section class="section">
-                <h2>基本使用</h2>
-                <div class="example">
-                    <div class="example-title">示例1：简单加法</div>
-                    <div class="code-block">
-输入：5 5 +
-输出：结果：10
-                    </div>
-                </div>
-                
-                <div class="example">
-                    <div class="example-title">示例2：复杂计算</div>
-                    <div class="code-block">
-输入：365 24 * 60 * 60 *
-输出：结果：31536000（一年秒数）
-                    </div>
-                </div>
-                
-                <div class="example">
-                    <div class="example-title">示例3：混合运算</div>
-                    <div class="code-block">
-输入：10 2 / 3 + 4 *
-输出：结果：32
-解释：(10/2 + 3) * 4 = (5 + 3) * 4 = 8 * 4 = 32
-                    </div>
-                </div>
-            </section>
-            
-            <section class="section">
-                <h2>交互模式</h2>
-                <div class="code-block">
-$ ./run.sh
-欢迎使用RPN计算器！
-输入表达式或命令，输入'quit'退出
+<header>
+<div class="nb-box">
+  <span><a href=".">🏡</a></span>
+  <span><code>tutorial_cn.nim</code></span>
+  <span><a href="https://github.com/wangmengdie3199-prog/rpn_calc"><svg aria-hidden="true" width="1.2em" height="1.2em" style="vertical-align: middle;" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59c.4.07.55-.17.55-.38c0-.19-.01-.82-.01-1.49c-2.01.37-2.53-.49-2.69-.94c-.09-.23-.48-.94-.82-1.13c-.28-.15-.68-.52-.01-.53c.63-.01 1.08.58 1.23.82c.72 1.21 1.87.87 2.33.66c.07-.52.28-.87.51-1.07c-1.78-.2-3.64-.89-3.64-3.95c0-.87.31-1.59.82-2.15c-.08-.2-.36-1.02.08-2.12c0 0 .67-.21 2.2.82c.64-.18 1.32-.27 2-.27c.68 0 1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82c.44 1.1.16 1.92.08 2.12c.51.56.82 1.27.82 2.15c0 3.07-1.87 3.75-3.65 3.95c.29.25.54.73.54 1.48c0 1.07-.01 1.93-.01 2.2c0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z" fill="#000"></path></svg></a></span>
+</div>
+<hr>
+</header><main>
+<h1>RPN计算器使用手册</h1>
+<h2>安装和编译指南</h2>
+<h3>环境要求</h3>
+<ul>
+<li>Ubuntu Linux</li>
+<li>GCC 编译器</li>
+<li>Nim 语言环境 (用于生成本文档)</li>
+</ul>
+<h3>编译步骤</h3>
+<pre><code class="language-bash">cd ~/Work/rpn_calc
+g++ -std=c++11 rpn_calc.cpp -o rpn_calc
+所有支持的操作说明
+四则运算
+加法: + - 将栈顶两个元素相加
 
-> 5 5 +
-结果：10
+减法: - - 将栈顶两个元素相减
 
-> 10 2 /
-结果：5
+乘法: * - 将栈顶两个元素相乘
 
-> clear
-栈已清空
+除法: / - 将栈顶两个元素相除
 
-> quit
-感谢使用！
-                </div>
-            </section>
-        </div>
-        
-        <!-- 操作说明标签 -->
-        <div id="operations" class="tab-content">
-            <section class="section">
-                <h2>基本算术操作</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>操作符</th>
-                            <th>描述</th>
-                            <th>示例</th>
-                            <th>结果</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><code>+</code></td>
-                            <td>加法</td>
-                            <td>5 5 +</td>
-                            <td>10</td>
-                        </tr>
-                        <tr>
-                            <td><code>-</code></td>
-                            <td>减法</td>
-                            <td>10 3 -</td>
-                            <td>7</td>
-                        </tr>
-                        <tr>
-                            <td><code>*</code></td>
-                            <td>乘法</td>
-                            <td>4 5 *</td>
-                            <td>20</td>
-                        </tr>
-                        <tr>
-                            <td><code>/</code></td>
-                            <td>除法</td>
-                            <td>15 3 /</td>
-                            <td>5</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-            
-            <section class="section">
-                <h2>栈操作命令</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>命令</th>
-                            <th>描述</th>
-                            <th>示例</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><code>clear</code></td>
-                            <td>清空栈</td>
-                            <td>clear</td>
-                        </tr>
-                        <tr>
-                            <td><code>show</code></td>
-                            <td>显示当前栈内容</td>
-                            <td>show</td>
-                        </tr>
-                        <tr>
-                            <td><code>pop</code></td>
-                            <td>弹出栈顶元素</td>
-                            <td>pop</td>
-                        </tr>
-                        <tr>
-                            <td><code>dup</code></td>
-                            <td>复制栈顶元素</td>
-                            <td>dup</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-            
-            <section class="section">
-                <h2>高级数学函数</h2>
-                <div class="feature-grid">
-                    <div class="feature-item">
-                        <div class="feature-icon">√</div>
-                        <h3>平方根</h3>
-                        <p><code>sqrt</code> - 计算平方根</p>
-                        <p>示例：16 sqrt → 4</p>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-icon">x²</div>
-                        <h3>幂运算</h3>
-                        <p><code>pow</code> - 计算幂</p>
-                        <p>示例：2 3 pow → 8</p>
-                    </div>
-                    <div class="feature-item">
-                        <div class="feature-icon">sin</div>
-                        <h3>三角函数</h3>
-                        <p><code>sin/cos/tan</code></p>
-                        <p>示例：90 sin → 1</p>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-        <!-- 高级功能标签 -->
-        <div id="advanced" class="tab-content">
-            <section class="section">
-                <h2>斐波那契数列</h2>
-                <div class="card">
-                    <h3>使用 <code>fib</code> 操作符</h3>
-                    <p>计算第n个斐波那契数</p>
-                    <div class="code-block">
-输入：10 fib
-输出：结果：55
-                    </div>
-                </div>
-            </section>
-            
-            <section class="section">
-                <h2>批量计算</h2>
-                <div class="card">
-                    <h3>从文件读取表达式</h3>
-                    <div class="code-block">
-# 创建计算文件
-echo "5 5 +" > calculations.txt
-echo "10 2 *" >> calculations.txt
-echo "100 10 /" >> calculations.txt
+数字输入
+支持整数和浮点数输入
 
-# 批量计算
-./rpn_calc -f calculations.txt
-                    </div>
-                </div>
-            </section>
-            
-            <section class="section">
-                <h2>历史记录</h2>
-                <div class="card">
-                    <h3>查看计算历史</h3>
-                    <p>使用 <code>history</code> 命令查看最近的计算记录</p>
-                    <div class="code-block">
-> history
-1. 5 5 + = 10
-2. 10 2 * = 20
-3. 100 10 / = 10
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-        <!-- 故障排除标签 -->
-        <div id="troubleshooting" class="tab-content">
-            <section class="section">
-                <h2>常见错误</h2>
-                
-                <div class="card warning">
-                    <h3>错误：除零错误</h3>
-                    <p><strong>问题描述：</strong>尝试除以零</p>
-                    <p><strong>示例：</strong>5 0 /</p>
-                    <p><strong>解决方案：</strong>检查除数是否为零</p>
-                </div>
-                
-                <div class="card warning">
-                    <h3>错误：栈空错误</h3>
-                    <p><strong>问题描述：</strong>栈中元素不足无法执行操作</p>
-                    <p><strong>示例：</strong>5 + （只有一个元素）</p>
-                    <p><strong>解决方案：</strong>确保栈中有足够的操作数</p>
-                </div>
-                
-                <div class="card warning">
-                    <h3>错误：无效输入</h3>
-                    <p><strong>问题描述：</strong>输入了无法识别的字符或操作符</p>
-                    <p><strong>示例：</strong>5 5 @</p>
-                    <p><strong>解决方案：</strong>检查输入是否只包含数字和有效操作符</p>
-                </div>
-            </section>
-            
-            <section class="section">
-                <h2>性能优化</h2>
-                <div class="card success">
-                    <h3>内存使用</h3>
-                    <ul>
-                        <li>默认栈大小：1000个元素</li>
-                        <li>最大数字精度：双精度浮点数</li>
-                        <li>历史记录保存：最近100条计算</li>
-                    </ul>
-                </div>
-            </section>
-        </div>
-        
-        <div class="footer">
-            <p>RPN计算器使用手册 &copy; 2024 - 版本 1.0</p>
-            <p>如有问题，请提交到 <a href="https://github.com/your-repo/rpn-calculator/issues">GitHub Issues</a></p>
-        </div>
-    </div>
+例如: 5, 3.14, -2.5
 
-    <script>
-        function switchTab(tabName) {
-            // 隐藏所有标签内容
-            var tabContents = document.getElementsByClassName('tab-content');
-            for (var i = 0; i < tabContents.length; i++) {
-                tabContents[i].classList.remove('active');
-            }
-            
-            // 移除所有标签的活动状态
-            var navTabs = document.getElementsByClassName('nav-tab');
-            for (var i = 0; i < navTabs.length; i++) {
-                navTabs[i].classList.remove('active');
-            }
-            
-            // 显示选中的标签内容
-            document.getElementById(tabName).classList.add('active');
-            
-            // 设置选中的标签为活动状态
-            event.currentTarget.classList.add('active');
-        }
-        
-        // 添加一些交互效果
-        document.addEventListener('DOMContentLoaded', function() {
-            // 为代码块添加复制功能
-            var codeBlocks = document.querySelectorAll('.code-block');
-            codeBlocks.forEach(function(block) {
-                block.addEventListener('click', function() {
-                    var text = block.textContent || block.innerText;
-                    navigator.clipboard.writeText(text).then(function() {
-                        var originalText = block.textContent;
-                        block.textContent = '已复制到剪贴板！';
-                        setTimeout(function() {
-                            block.textContent = originalText;
-                        }, 2000);
-                    });
-                });
-            });
-        });
-    </script>
-</body>
+错误代码和异常说明
+错误类型
+除零错误: 尝试除以零时触发
+
+栈空错误: 操作时栈中元素不足
+
+格式错误: 输入无法识别的操作符
+
+错误示例
+输入: 5 0 /
+输出: 错误: 除零错误
+
+输入: +
+输出: 错误: 栈为空
+
+输入: abc
+输出: 错误: 未知操作符 'abc'
+示例输入输出
+</code></pre>
+<pre><code class="nohighlight hljs nim"><span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;示例1: 5 5 +&quot;</span>
+<span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;输出: 结果: 10&quot;</span>
+<span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&quot;</span>
+<span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;示例2: 10 4 - 2 *&quot;</span>
+<span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;输出: 结果: 12&quot;</span>
+<span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&quot;</span>
+<span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;示例3: 1 2 + 3 + 7 7 * +&quot;</span>
+<span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;输出: 结果: 55&quot;</span></code></pre><pre class="nb-output">示例1: 5 5 +
+输出: 结果: 10
+
+示例2: 10 4 - 2 *
+输出: 结果: 12
+
+示例3: 1 2 + 3 + 7 7 * +
+输出: 结果: 55</pre>
+<p>退出程序
+输入 q 或 quit 退出计算器</p>
+<p>注意事项
+使用空格分隔数字和操作符</p>
+<p>支持连续运算</p>
+<p>自动处理浮点数运算</p>
+</main>
+<footer>
+<div class="nb-box">
+  <span><span class="nb-small">made with <a href="https://pietroppeter.github.io/nimib/">nimib 🐳</a></span></span>
+  <span></span>
+  <span><button class="nb-small" id="show" onclick="toggleSourceDisplay()">Show Source</button></span>
+</div>
+</footer>
+<section id="source">
+<pre><code class="nohighlight nim hljs"><span class="hljs-keyword">import</span> nimib
+
+nbInit
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+# RPN计算器使用手册
+
+## 安装和编译指南
+
+### 环境要求
+- Ubuntu Linux
+- GCC 编译器
+- Nim 语言环境 (用于生成本文档)
+
+### 编译步骤
+```bash
+cd ~/Work/rpn_calc
+g++ -std=c++11 rpn_calc.cpp -o rpn_calc
+所有支持的操作说明
+四则运算
+加法: + - 将栈顶两个元素相加
+
+减法: - - 将栈顶两个元素相减
+
+乘法: * - 将栈顶两个元素相乘
+
+除法: / - 将栈顶两个元素相除
+
+数字输入
+支持整数和浮点数输入
+
+例如: 5, 3.14, -2.5
+
+错误代码和异常说明
+错误类型
+除零错误: 尝试除以零时触发
+
+栈空错误: 操作时栈中元素不足
+
+格式错误: 输入无法识别的操作符
+
+错误示例
+输入: 5 0 /
+输出: 错误: 除零错误
+
+输入: +
+输出: 错误: 栈为空
+
+输入: abc
+输出: 错误: 未知操作符 'abc'
+示例输入输出
+&quot;&quot;&quot;</span>
+
+nbCode:
+  <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;示例1: 5 5 +&quot;</span>
+  <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;输出: 结果: 10&quot;</span>
+  <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&quot;</span>
+  <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;示例2: 10 4 - 2 *&quot;</span>
+  <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;输出: 结果: 12&quot;</span>
+  <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&quot;</span>
+  <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;示例3: 1 2 + 3 + 7 7 * +&quot;</span>
+  <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;输出: 结果: 55&quot;</span>
+
+nbText: <span class="hljs-string">&quot;&quot;&quot;
+
+退出程序
+输入 q 或 quit 退出计算器
+
+注意事项
+使用空格分隔数字和操作符
+
+支持连续运算
+
+自动处理浮点数运算
+&quot;&quot;&quot;</span>
+
+nbSave
+</code></pre>
+</section><script>
+function toggleSourceDisplay() {
+  var btn = document.getElementById("show")
+  var source = document.getElementById("source");
+  if (btn.innerHTML=="Show Source") {
+    btn.innerHTML = "Hide Source";
+    source.style.display = "block";
+  } else {
+    btn.innerHTML = "Show Source";
+    source.style.display = "none";
+  }
+}
+</script></body>
 </html>
